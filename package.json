@@ -1,0 +1,60 @@
+{
+    "name": "mixel-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "DEVELOPMENT_MODE=true nodemon server.js",
+        "start": "DEVELOPMENT_MODE=false node server.js",
+        "docs": "rm -rf ./docs/* && node apidocs"
+    },
+    "apidoc": {
+        "title": "MixelBlocks API Documentation",
+        "url": "https://api.mixelblocks.de/",
+        "sampleUrl": "https://api.mixelblocks.de/",
+        "useHostUrlAsSampleUrl": false,
+        "header": {
+            "title": "Documentation",
+            "filename": "z-docs-header.md"
+        },
+        "footer": {
+            "title": "mixelblocks.de",
+            "filename": "z-docs-footer.md"
+        },
+        "order": [
+            "Error",
+            "Define",
+            "PostTitleAndError",
+            "PostError"
+        ]
+    },
+    "author": "Lucifer#1234",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "check-password-strength": "^2.0.3",
+        "compression": "^1.7.4",
+        "cookie-parser": "^1.4.6",
+        "dotenv": "^10.0.0",
+        "ejs": "^3.1.6",
+        "express": "^4.17.2",
+        "express-rate-limit": "^6.0.5",
+        "http": "^0.0.1-security",
+        "ip6addr": "^0.2.5",
+        "jsonwebtoken": "^8.5.1",
+        "md5": "^2.3.0",
+        "mongodb": "^4.3.0",
+        "node-fetch": "^3.1.0",
+        "path": "^0.12.7",
+        "redis": "^4.0.1",
+        "requests": "^0.3.0",
+        "serve-favicon": "^2.5.0",
+        "time-stamp": "^2.2.0",
+        "uuid": "^8.3.2",
+        "validator": "^13.7.0"
+    },
+    "devDependencies": {
+        "apidoc": "^0.50.3"
+    }
+}
