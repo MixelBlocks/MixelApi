@@ -14,6 +14,10 @@ module.exports = class MongoDBHandler {
      */
     constructor(connectionstring) {
         this.connectionstring = connectionstring;
+        MongoClient.connect(this.connectionstring, DRIVER_OPTIONS, (error, db) => {
+            if (error) console.error(error);
+            db.close();
+        });
     }
 
     /**
@@ -69,8 +73,11 @@ module.exports = class MongoDBHandler {
             if (error) return callbackFunction(false, error);
             var dbf = db.db(databaseName);
             dbf.createCollection(collectionName, function (err, result) {
-                if (err) return callbackFunction(false, err);
                 db.close();
+                if (err) {
+                    if (callbackFunction) callbackFunction(false, err);
+                    return;
+                }
                 if (callbackFunction) callbackFunction(true);
             });
         });
@@ -105,8 +112,11 @@ module.exports = class MongoDBHandler {
             dbf.collection(collectionName)
                 .find(queryObject)
                 .toArray(function (err, result) {
-                    if (err) return callbackFunction(false, err);
                     db.close();
+                    if (err) {
+                        if (callbackFunction) callbackFunction(false, err);
+                        return;
+                    }
                     if (callbackFunction) callbackFunction(result);
                 });
         });
@@ -140,8 +150,11 @@ module.exports = class MongoDBHandler {
             if (error) return callbackFunction(false, error);
             var dbf = db.db(databaseName);
             dbf.collection(collectionName).insertOne(object, (err, result) => {
-                if (err) return callbackFunction(false, err);
                 db.close();
+                if (err) {
+                    if (callbackFunction) callbackFunction(false, err);
+                    return;
+                }
                 if (callbackFunction) callbackFunction(true);
             });
         });
@@ -175,8 +188,11 @@ module.exports = class MongoDBHandler {
             if (error) return callbackFunction(false, error);
             var dbf = db.db(databaseName);
             dbf.collection(collectionName).deleteOne(queryObject, function (err, result) {
-                if (err) return callbackFunction(false, err);
                 db.close();
+                if (err) {
+                    if (callbackFunction) callbackFunction(false, err);
+                    return;
+                }
                 if (callbackFunction) callbackFunction(true);
             });
         });
@@ -214,8 +230,11 @@ module.exports = class MongoDBHandler {
                 $set: newValues,
             };
             dbf.collection(collectionName).updateOne(queryObject, obj, function (err, result) {
-                if (err) return callbackFunction(false, err);
                 db.close();
+                if (err) {
+                    if (callbackFunction) callbackFunction(false, err);
+                    return;
+                }
                 if (callbackFunction) callbackFunction(true);
             });
         });

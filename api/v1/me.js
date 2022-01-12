@@ -7,7 +7,7 @@ module.exports.path = 'me';
 module.exports.router = (app, routerPath, router = express.Router()) => {
     var router = express.Router();
 
-    router.get('/', async (req, res) => {
+    var handleMe = async (req, res) => {
         if (!req.user)
             return res.status(401).json({
                 error: true,
@@ -23,9 +23,19 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
                 createdAt: req.user.createdAt,
                 groups: req.user.groups,
                 minecraft: req.user.minecraft,
+                profile: {
+                    avatar: req.user.profile.avatar,
+                    status: req.user.profile.status,
+                    status_emoji: req.user.profile.status_emoji,
+                    bio: req.user.profile.bio,
+                    createdAt: req.user.profile.createdAt,
+                },
             },
         });
-    });
+    };
+
+    router.post('/', handleMe);
+    router.get('/', handleMe);
 
     return router;
 };

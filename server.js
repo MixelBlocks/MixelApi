@@ -102,12 +102,12 @@ app.route(/(\/api\/?\/?\*?)/g).all((req, res) => {
 });
 
 // static documentation webserver
-app.use('/docs', express.static('./docs'));
-app.use('/public', express.static('./public'));
+app.use('/docs', express.static('docs'));
+app.use('/public', express.static('public'));
 
 // basic redirects
-app.get('/discord', (req, res) => res.redirect('https://discord.gg/eSxe49AeC7'));
-app.get('/support', (req, res) => res.redirect('https://discord.gg/eSxe49AeC7'));
+app.get('/discord', (req, res) => res.redirect('https://discord.gg/mSQefzR3XH'));
+app.get('/support', (req, res) => res.redirect('https://discord.gg/mSQefzR3XH'));
 
 app.get('/github', (req, res) => res.redirect('https://github.com/MixelBlocks'));
 
@@ -125,12 +125,13 @@ app.get([/\/(ver|version)/, '/v'], (req, res, next) => {
     });
 });
 
-app.use((req, res, next) => {
-    var token;
-    if (!req.headers.authorization) token = req.body.authorization;
-    else token = req.headers.authorization;
+app.profiles = {};
+app.users = {};
 
-    if (!token) next();
+// verify user access
+app.use(async (req, res, next) => {
+    var token = req.headers.authorization || req.body.authorization;
+    if (!token) return next();
 
     var data;
     try {
@@ -139,14 +140,36 @@ app.use((req, res, next) => {
         return next();
     }
 
-    app.db.query('api', 'users', { uuid: data.uuid }, (result, err) => {
-        if (err) {
-            console.error(err);
-            return next();
-        }
-        req.user = result[0];
-        next();
-    });
+    var revokedToken = await app.db.queryAsync('api', 'revoked_tokens', { token: token });
+    if (revokedToken[0] != null) return next();
+
+    var user = app.users[data.uuid];
+    var profile = app.profiles[data.uuid];
+
+    if (!user) {
+        var userData = await app.db.queryAsync('api', 'users', { uuid: data.uuid }).catch((error) => {});
+        if (!userData[0]) return next();
+        app.users[data.uuid] = userData[0];
+    }
+
+    if (!profile) {
+        var profileData = await app.db.queryAsync('api', 'profiles', { user: data.uuid }).catch((error) => {});
+        if (!profileData || !profileData[0]) {
+            app.profiles[data.uuid] = {
+                user: data.uuid,
+                avatar: '',
+                status: '',
+                status_emoji: '😎',
+                bio: '',
+                createdAt: new Date(),
+            };
+            await app.db.insertObjectAsync('api', 'profiles', app.profiles[data.uuid]).catch((error) => {});
+        } else app.profiles[data.uuid] = profileData[0];
+    }
+
+    req.user = app.users[data.uuid];
+    req.user.profile = app.profiles[data.uuid];
+    next();
 });
 
 // enable api routes
@@ -182,13 +205,25 @@ if (process.env.DEVELOPMENT_MODE) {
 }
 
 // STATIC WEBSITE
-var finalhandler = require('finalhandler');
-var http = require('http');
-var serveStatic = require('serve-static');
-// Serve up public/
-var serve = serveStatic('public/', { index: ['index.html'] });
-// Create server
-var server = http.createServer(function onRequest(req, res) {
-    serve(req, res, finalhandler(req, res));
+const webApp = express();
+webApp.use(compression());
+webApp.use(cookieParser());
+webApp.use(express.json());
+webApp.use(express.urlencoded({ extended: false }));
+// for security reason remove the powered by header
+webApp.use(function (req, res, next) {
+    res.removeHeader('X-Powered-By');
+    next();
 });
-server.listen(8000);
+// CORS Policy things
+webApp.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+webApp.get('/discord', (req, res) => res.redirect('https://discord.gg/mSQefzR3XH'));
+webApp.get('/support', (req, res) => res.redirect('https://discord.gg/mSQefzR3XH'));
+webApp.get('/github', (req, res) => res.redirect('https://github.com/MixelBlocks'));
+webApp.get('/dashboard', (req, res) => res.redirect('https://dash.mixelblocks.de'));
+webApp.use(express.static('public'));
+webApp.listen(8000);

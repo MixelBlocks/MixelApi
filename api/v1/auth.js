@@ -76,6 +76,8 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
 
         var passwordHashed = bcrypt.hashSync(password, saltRounds);
 
+        var created = new Date();
+
         await app.db.insertObjectAsync('api', 'users', {
             uuid: randomUUID,
             username: username,
@@ -89,7 +91,14 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
                 username: '',
                 code: authCode,
             },
-            createdAt: new Date(),
+            createdAt: created,
+        });
+
+        await app.db.insertObjectAsync('api', 'profiles', {
+            user: randomUUID,
+            avatar: null,
+            bio: '',
+            createdAt: created,
         });
 
         return res.status(201).json({
@@ -99,7 +108,7 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
         });
     });
 
-    router.post('/loginUser', async (req, res) => {
+    router.post('/authenticateUser', async (req, res) => {
         const { username, password } = req.body;
 
         if (!username || !password)
@@ -147,6 +156,19 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
     });
 
     router.post('/isAuthenticated', async (req, res) => {
+        if (!req.user)
+            return res.status(401).json({
+                error: true,
+                message: 'unauthorized',
+            });
+
+        return res.status(200).json({
+            error: false,
+            message: 'authorized',
+        });
+    });
+
+    router.post('/revokeToken', async (req, res) => {
         var token;
         if (!req.headers.authorization) token = req.body.authorization;
         else token = req.headers.authorization;
@@ -167,24 +189,12 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
             });
         }
 
-        var userDataRes = await app.db.queryAsync('api', 'users', { uuid: data.uuid }).catch((error) => {
-            console.error(error);
-            return res.status(500).json({
-                error: true,
-                message: 'databaseError',
-            });
-        });
-
-        if (userDataRes.length < 1)
-            return res.status(401).json({
-                error: true,
-                message: 'user does not exist anymore',
-            });
+        var revokedToken = await app.db.queryAsync('api', 'revoked_tokens', { token: token });
+        if (!revokedToken[0]) await app.db.insertObjectAsync('api', 'revoked_tokens', { token: token });
 
         return res.status(200).json({
             error: false,
             message: 'success',
-            data: data,
         });
     });
 

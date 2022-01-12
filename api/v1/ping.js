@@ -11,7 +11,6 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
         return res.status(200).json({
             error: false,
             ping: true,
-            version: app.API_VERSION,
         });
     });
 
