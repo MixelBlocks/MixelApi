@@ -94,7 +94,6 @@ body {
 
 #message {
     display: inline-block;
-    width: 65px;
     font-size: 25px;
     background-color: rgba(0, 200, 0, 0.286);
     border: solid 3px rgba(0, 200, 0, 0.286);
