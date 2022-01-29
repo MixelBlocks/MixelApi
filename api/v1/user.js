@@ -67,3 +67,53 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
 
     return router;
 };
+
+/**
+ * @api {get} v1/user/ Get the public data of a user
+ * @apiName User
+ * @apiGroup UserManagement
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -i https://api.mixelblocks.de/v1/user?user=lucifer1234
+ *
+ * @apiSuccess {Object} user object
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "uuid": "userData.uuid",
+ *       "username": "userData.username",
+ *       "createdAt": "userData.createdAt",
+ *       "minecraft": {
+ *         "username": "userData.minecraft.username",
+ *         "uuid": "userData.minecraft.uuid"
+ *       },
+ *       "profile": "userProfileData"
+ *     }
+ *
+ */
+
+/**
+ * @api {post} v1/user/ Get the public data of a user
+ * @apiName User
+ * @apiGroup UserManagement
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -i https://api.mixelblocks.de/v1/user -d '{"user": "lucifer1234"}'
+ *
+ * @apiSuccess {Object} user object
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "uuid": "userData.uuid",
+ *       "username": "userData.username",
+ *       "createdAt": "userData.createdAt",
+ *       "minecraft": {
+ *         "username": "userData.minecraft.username",
+ *         "uuid": "userData.minecraft.uuid"
+ *       },
+ *       "profile": "userProfileData"
+ *     }
+ *
+ */

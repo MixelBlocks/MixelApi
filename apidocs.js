@@ -13,4 +13,5 @@ if (typeof doc !== 'boolean') {
     console.error('Documentation creation done');
 } else {
     console.error('Documentation creation failed');
+    console.log(doc);
 }

@@ -44,32 +44,32 @@ app.set('view engine', 'ejs');
 app.use(serveFavicon(defaultPath + 'public/favicon.ico'));
 
 // CREATE REDIS CLIENT INSTANCE
-var redisClient = Redis.createClient({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-});
+// var redisClient = Redis.createClient({
+//     host: process.env.REDIS_HOST,
+//     port: process.env.REDIS_PORT,
+// });
 
-redisClient.on('error', (redisClientError) => console.error('[REDIS CLIENT] ERROR: ', redisClientError));
+// redisClient.on('error', (redisClientError) => console.error('[REDIS CLIENT] ERROR: ', redisClientError));
 
-redisClient
-    .connect()
-    .then(() => {
-        app.debug('[REDIS CLIENT] connected... performing authentication');
-        redisClient
-            .auth({
-                username: process.env.REDIS_USER,
-                password: process.env.REDIS_AUTH,
-            })
-            .then(async () => {
-                await redisClient.set('api.start.auth.message', '[REDIS CLIENT] Authentication performed successful. READY TO USE', { ex: 1000 });
-                var response = await redisClient.get('api.start.auth.message');
-                app.debug(response);
-            })
-            .catch(console.error);
-    })
-    .catch(console.error);
+// redisClient
+//     .connect()
+//     .then(() => {
+//         app.debug('[REDIS CLIENT] connected... performing authentication');
+//         redisClient
+//             .auth({
+//                 username: process.env.REDIS_USER,
+//                 password: process.env.REDIS_AUTH,
+//             })
+//             .then(async () => {
+//                 await redisClient.set('api.start.auth.message', '[REDIS CLIENT] Authentication performed successful. READY TO USE', { ex: 1000 });
+//                 var response = await redisClient.get('api.start.auth.message');
+//                 app.debug(response);
+//             })
+//             .catch(console.error);
+//     })
+//     .catch(console.error);
 
-app.redis = redisClient;
+// app.redis = redisClient;
 
 // require MongoDB Handler
 var MongoDBHandler = require('./tools/databaseHandler');

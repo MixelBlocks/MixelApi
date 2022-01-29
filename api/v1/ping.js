@@ -32,7 +32,6 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
  *     {
  *       "error": false,
  *       "ping": true,
- *       "version": "v1"
  *     }
  *
  */

@@ -39,3 +39,59 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
 
     return router;
 };
+
+/**
+ * @api {get} v1/me/ Get the current logged in user data
+ * @apiName Me
+ * @apiGroup UserManagement
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -H "Authorization: UserToken" -i https://api.mixelblocks.de/v1/me
+ *
+ * @apiHeader [Authorization token] Authorization=jsonwebtoken Authorization by jwt
+ *
+ * @apiSuccess {Object} user object
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "uuid": "userData.uuid",
+ *       "username": "userData.username",
+ *       "email": "userData.email",
+ *       "groups": "userData.groups = []",
+ *       "createdAt": "userData.createdAt",
+ *       "minecraft": {
+ *         "username": "userData.minecraft.username",
+ *         "uuid": "userData.minecraft.uuid"
+ *       },
+ *       "profile": "userProfileData"
+ *     }
+ *
+ */
+
+/**
+ * @api {post} v1/user/ Get the current logged in user data
+ * @apiName Me
+ * @apiGroup UserManagement
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -i https://api.mixelblocks.de/v1/me -d '{"authorization": "token"}'
+ *
+ * @apiSuccess {Object} user object
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "uuid": "userData.uuid",
+ *       "username": "userData.username",
+ *       "email": "userData.email",
+ *       "groups": "userData.groups = []",
+ *       "createdAt": "userData.createdAt",
+ *       "minecraft": {
+ *         "username": "userData.minecraft.username",
+ *         "uuid": "userData.minecraft.uuid"
+ *       },
+ *       "profile": "userProfileData"
+ *     }
+ *
+ */

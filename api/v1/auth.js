@@ -29,7 +29,7 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
         if (password !== password_confirm)
             return res.status(401).json({
                 error: true,
-                message: 'unauthorized',
+                message: 'passwordMismatch',
             });
 
         var passwordStrength = pws(password);
@@ -138,7 +138,7 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
         if (userDataRes.length <= 0)
             return res.status(401).json({
                 error: true,
-                message: 'unauthorized',
+                message: 'unknownUser',
             });
 
         var passwordMatch = bcrypt.compareSync(password, userDataRes[0].password);
@@ -146,7 +146,7 @@ module.exports.router = (app, routerPath, router = express.Router()) => {
         if (!passwordMatch)
             return res.status(401).json({
                 error: true,
-                message: 'unauthorized',
+                message: 'passwordMismatch',
             });
 
         return res.status(200).json({
